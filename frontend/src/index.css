@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-themorning-gray text-themorning-dark font-sans;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-bold text-themorning-dark;
+  }
+}
+
+@layer utilities {
+  .newspaper-divider {
+    @apply border-b border-themorning-border pb-4 mb-4;
+  }
+  .newspaper-divider-y {
+    @apply border-l border-themorning-border pl-6;
+  }
+}
