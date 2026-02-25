@@ -85,8 +85,8 @@ const CategoryPage = () => {
                                     <Link
                                         to={key === 'news' ? '/' : `/category/${key}`}
                                         className={`inline-block py-3 px-4 text-xs font-bold uppercase tracking-widest border-b-[3px] transition-colors no-underline ${category === key
-                                                ? 'border-current text-gray-800'
-                                                : 'border-transparent text-gray-500 hover:text-black hover:border-gray-200'
+                                            ? 'border-current text-gray-800'
+                                            : 'border-transparent text-gray-500 hover:text-black hover:border-gray-200'
                                             }`}
                                         style={category === key ? { borderColor: val.color, color: val.color } : {}}
                                     >
@@ -224,7 +224,7 @@ const CategoryPage = () => {
             </main>
 
             <footer className="bg-gray-900 text-white py-8 text-center font-sans text-xs text-gray-500 mt-12">
-                © {new Date().getFullYear()} The Morning News. All rights reserved.
+                &copy; {new Date().getFullYear()} ivoice.lk. All rights reserved.
             </footer>
         </div>
     );

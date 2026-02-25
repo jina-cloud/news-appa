@@ -372,7 +372,7 @@ const NewsDetail = () => {
             </main>
 
             <footer className="bg-gray-900 text-white py-8 text-center font-sans text-xs text-gray-500">
-                © {new Date().getFullYear()} The Morning News. All rights reserved.
+                &copy; {new Date().getFullYear()} ivoice.lk. All rights reserved.
             </footer>
         </div>
     );

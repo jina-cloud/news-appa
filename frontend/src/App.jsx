@@ -124,7 +124,7 @@ function HomePage() {
                     </div>
                 </div>
                 <div className="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-gray-800 text-sm text-center text-gray-500 font-sans">
-                    &copy; {new Date().getFullYear()} The Morning News. All rights reserved.
+                    &copy; {new Date().getFullYear()} ivoice.lk. All rights reserved.
                 </div>
             </footer>
         </div>
