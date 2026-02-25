@@ -40,12 +40,13 @@ const NewsCard = ({ article, variant = 'default' }) => {
             <Link to={linkTo} className="group block no-underline text-inherit h-full">
                 <article className="flex flex-col h-full">
                     {cover && (
-                        <div className="overflow-hidden mb-4 rounded-lg aspect-video bg-gray-100 shadow-sm">
+                        <div className="relative overflow-hidden mb-4 rounded-lg aspect-video bg-gray-100 shadow-sm">
                             <img
                                 src={cover} alt={titleSi}
                                 className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-[1.03]"
                                 onError={e => { e.target.src = 'https://placehold.co/900x506/f3f4f6/9ca3af?text=The+Morning'; }}
                             />
+                            <img src="/overlay.png" alt="" className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10" />
                         </div>
                     )}
                     <div className="flex flex-col flex-grow">
@@ -77,12 +78,13 @@ const NewsCard = ({ article, variant = 'default' }) => {
             <Link to={linkTo} className="group block no-underline text-inherit">
                 <article className="flex gap-3 items-start py-3 border-b border-gray-100 last:border-b-0">
                     {cover && (
-                        <div className="w-20 h-14 sm:w-24 sm:h-16 shrink-0 overflow-hidden rounded bg-gray-100">
+                        <div className="relative w-20 h-14 sm:w-24 sm:h-16 shrink-0 overflow-hidden rounded bg-gray-100">
                             <img
                                 src={cover} alt={titleSi}
                                 className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
                                 onError={e => { e.target.src = 'https://placehold.co/200x150/f3f4f6/9ca3af?text=News'; }}
                             />
+                            <img src="/overlay.png" alt="" className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10" />
                         </div>
                     )}
                     <div className="flex-1 min-w-0">
@@ -105,12 +107,13 @@ const NewsCard = ({ article, variant = 'default' }) => {
         <Link to={linkTo} className="group block no-underline text-inherit">
             <article>
                 {cover && (
-                    <div className="overflow-hidden mb-3 aspect-[16/10] rounded-md bg-gray-100">
+                    <div className="relative overflow-hidden mb-3 aspect-[16/10] rounded-md bg-gray-100">
                         <img
                             src={cover} alt={titleSi}
                             className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                             onError={e => { e.target.src = 'https://placehold.co/400x250/f3f4f6/9ca3af?text=News'; }}
                         />
+                        <img src="/overlay.png" alt="" className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10" />
                     </div>
                 )}
                 <span className={`inline-block ${badgeColor} text-white text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded mb-1.5`}>

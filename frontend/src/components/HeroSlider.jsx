@@ -92,6 +92,9 @@ const HeroSlider = ({ articles = [] }) => {
                     {/* Dark gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none rounded-xl" />
 
+                    {/* iVoice Overlay */}
+                    <img src="/overlay.png" alt="" className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0" />
+
                     {/* ── Text overlay ─────────────────────────────────── */}
                     <div className="absolute bottom-0 left-0 right-0 px-5 pb-14 pt-10">
                         {/* Badge + date */}
@@ -145,8 +148,8 @@ const HeroSlider = ({ articles = [] }) => {
                         onClick={() => goTo(i, true)}
                         aria-label={`Go to slide ${i + 1}`}
                         className={`rounded-full transition-all duration-300 ${i === current
-                                ? 'w-6 h-2 bg-white'
-                                : 'w-2 h-2 bg-white/50 hover:bg-white/80'
+                            ? 'w-6 h-2 bg-white'
+                            : 'w-2 h-2 bg-white/50 hover:bg-white/80'
                             }`}
                     />
                 ))}
