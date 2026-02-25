@@ -91,8 +91,8 @@ function HomePage() {
             <footer className="bg-themorning-dark text-white py-12 mt-12">
                 <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 font-sans">
                     <div className="md:col-span-2">
-                        <div className="text-3xl font-black font-serif tracking-tighter mb-4">
-                            <span className="text-themorning-red mr-1">T</span>HE <span className="text-themorning-red ml-2 mr-1">M</span>ORNING
+                        <div className="mb-4">
+                            <img src="/logo.png" alt="iVoice Logo" className="h-10 w-auto filter brightness-0 invert" />
                         </div>
                         <p className="text-gray-400 text-sm max-w-sm">
                             Sri Lanka's leading independent news aggregator, delivering breaking news, analysis, and insights.

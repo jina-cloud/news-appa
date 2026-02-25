@@ -46,8 +46,8 @@ const Header = () => {
                     <button className="md:hidden text-gray-600 hover:text-black" aria-label="Menu">
                         <Menu size={22} />
                     </button>
-                    <Link to="/" className="text-[2.2rem] font-black font-serif tracking-tighter leading-none select-none no-underline text-black">
-                        <span className="text-themorning-red">T</span>HE&nbsp;<span className="text-themorning-red">M</span>ORNING
+                    <Link to="/" className="flex items-center no-underline">
+                        <img src="/logo.png" alt="iVoice Logo" className="h-10 w-auto" />
                     </Link>
                 </div>
 
