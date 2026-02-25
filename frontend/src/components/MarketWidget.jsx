@@ -22,70 +22,69 @@ const LiveStreamPlayer = () => {
     const videoRef = useRef(null);
     const hlsRef = useRef(null);
     const [open, setOpen] = useState(false);
-    const [inputUrl, setInputUrl] = useState('');
-    const [activeUrl, setActiveUrl] = useState('');
     const [status, setStatus] = useState('idle'); // idle | loading | playing | error
 
-    const loadStream = (url) => {
-        if (!url.trim()) return;
-        const video = videoRef.current;
-        if (!video) return;
-
-        // Destroy previous instance
-        if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
-
+    const startStream = async (video) => {
         setStatus('loading');
-        setActiveUrl(url.trim());
+        try {
+            // Fetch stream URL from backend — URL never exposed in frontend source
+            const res = await fetch('/api/stream');
+            const { url } = await res.json();
 
-        if (Hls.isSupported()) {
-            const hls = new Hls({ enableWorker: true, lowLatencyMode: true });
-            hlsRef.current = hls;
-            hls.loadSource(url.trim());
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                video.play().catch(() => { });
-                setStatus('playing');
-            });
-            hls.on(Hls.Events.ERROR, (_, data) => {
-                if (data.fatal) setStatus('error');
-            });
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            // Safari native HLS
-            video.src = url.trim();
-            video.addEventListener('loadedmetadata', () => {
-                video.play().catch(() => { });
-                setStatus('playing');
-            }, { once: true });
-            video.addEventListener('error', () => setStatus('error'), { once: true });
-        } else {
+            if (Hls.isSupported()) {
+                if (hlsRef.current) hlsRef.current.destroy();
+                const hls = new Hls({ enableWorker: true, lowLatencyMode: true });
+                hlsRef.current = hls;
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play().catch(() => { });
+                    setStatus('playing');
+                });
+                hls.on(Hls.Events.ERROR, (_, data) => {
+                    if (data.fatal) setStatus('error');
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('loadedmetadata', () => {
+                    video.play().catch(() => { });
+                    setStatus('playing');
+                }, { once: true });
+                video.addEventListener('error', () => setStatus('error'), { once: true });
+            } else {
+                setStatus('error');
+            }
+        } catch {
             setStatus('error');
         }
     };
 
-    // Cleanup on unmount
-    useEffect(() => () => { if (hlsRef.current) hlsRef.current.destroy(); }, []);
-
-    // Stop stream when panel is closed
-    const toggleOpen = () => {
-        if (open) {
+    // Auto-start when panel opens, stop when closed
+    useEffect(() => {
+        if (open && videoRef.current) {
+            startStream(videoRef.current);
+        } else if (!open) {
             if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
             if (videoRef.current) videoRef.current.src = '';
             setStatus('idle');
-            setActiveUrl('');
         }
-        setOpen(o => !o);
-    };
+    }, [open]);
+
+    // Cleanup on unmount
+    useEffect(() => () => { if (hlsRef.current) hlsRef.current.destroy(); }, []);
 
     return (
         <div className="border-t border-gray-200 mt-1">
             {/* Toggle header */}
             <button
-                onClick={toggleOpen}
+                onClick={() => setOpen(o => !o)}
                 className="w-full flex items-center justify-between px-4 py-2.5 bg-[#0f2027] hover:bg-[#1a3040] transition-colors"
             >
                 <div className="flex items-center gap-2">
-                    <span className="text-red-500 animate-pulse">●</span>
-                    <span className="text-white font-black font-sans text-xs tracking-widest uppercase">Live Sports Stream</span>
+                    <span className={`text-red-500 ${status === 'playing' ? 'animate-pulse' : ''}`}>●</span>
+                    <span className="text-white font-black font-sans text-xs tracking-widest uppercase">
+                        {status === 'playing' ? 'Live Sports · ON AIR' : 'Live Sports Stream'}
+                    </span>
                 </div>
                 <svg
                     className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
@@ -97,25 +96,7 @@ const LiveStreamPlayer = () => {
 
             {/* Expandable panel */}
             {open && (
-                <div className="bg-gray-950 p-3 space-y-3">
-                    {/* URL input */}
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            value={inputUrl}
-                            onChange={e => setInputUrl(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && loadStream(inputUrl)}
-                            placeholder="Paste .m3u8 IPTV link here…"
-                            className="flex-1 min-w-0 bg-gray-800 text-white text-[11px] placeholder-gray-500 border border-gray-700 rounded px-2.5 py-1.5 focus:outline-none focus:border-red-500 transition-colors font-mono"
-                        />
-                        <button
-                            onClick={() => loadStream(inputUrl)}
-                            className="shrink-0 bg-red-600 hover:bg-red-700 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded transition-colors"
-                        >
-                            Play
-                        </button>
-                    </div>
-
+                <div className="bg-gray-950 p-3">
                     {/* Video player */}
                     <div className="relative w-full aspect-video bg-black rounded overflow-hidden">
                         <video
@@ -123,29 +104,21 @@ const LiveStreamPlayer = () => {
                             controls
                             className="w-full h-full"
                             playsInline
+                            muted
                         />
-                        {/* Overlays */}
-                        {status === 'idle' && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500 pointer-events-none">
-                                <svg className="w-10 h-10 mb-2 opacity-40" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
-                                <p className="text-[10px] uppercase tracking-widest">Enter an IPTV link to start</p>
-                            </div>
-                        )}
                         {status === 'loading' && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/70 pointer-events-none">
-                                <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black pointer-events-none">
+                                <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mb-2" />
+                                <p className="text-[10px] text-gray-400 uppercase tracking-widest">Connecting to stream…</p>
                             </div>
                         )}
                         {status === 'error' && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 pointer-events-none">
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black pointer-events-none">
                                 <span className="text-red-500 text-2xl mb-1">⚠</span>
-                                <p className="text-[10px] text-red-400 uppercase tracking-widest">Stream unavailable</p>
-                                <p className="text-[9px] text-gray-500 mt-1">Check the link or try another</p>
+                                <p className="text-[10px] text-red-400 uppercase tracking-widest">Stream offline</p>
+                                <p className="text-[9px] text-gray-500 mt-1">Please try again later</p>
                             </div>
                         )}
-                        {/* LIVE badge when playing */}
                         {status === 'playing' && (
                             <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-600 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded pointer-events-none">
                                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse inline-block" />
@@ -153,10 +126,6 @@ const LiveStreamPlayer = () => {
                             </div>
                         )}
                     </div>
-
-                    <p className="text-[9px] text-gray-600 text-center">
-                        Supports HLS (.m3u8) IPTV streams
-                    </p>
                 </div>
             )}
         </div>

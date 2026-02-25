@@ -16,6 +16,12 @@ router.get('/news', getAllNews);
 router.get('/news/category/:category', getNewsByCategory);
 router.get('/news/:id', getSingleNews);
 
+// Live stream endpoint — URL is server-side only, never exposed in client code
+router.get('/stream', (req, res) => {
+    const streamUrl = process.env.LIVE_STREAM_URL ||
+        'https://rtmp01.voaplus.com/hls/6x6ik312qk4grfxocfcv_src/index.m3u8';
+    res.json({ url: streamUrl });
+});
 
 // Admin Routes for manual news updates
 router.post('/admin/news', addCustomNews);
@@ -26,3 +32,4 @@ router.delete('/admin/news/:id', deleteCustomNews);
 router.post('/watermark/remove', removeWatermark);
 
 module.exports = router;
+
