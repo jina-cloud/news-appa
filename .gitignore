@@ -45,3 +45,7 @@ Thumbs.db
 # Coverage
 coverage/
 .nyc_output/
+
+# WhatsApp Microservice local cache
+.wwebjs_auth/
+.wwebjs_cache/
